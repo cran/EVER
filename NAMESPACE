@@ -1,0 +1,2 @@
+export(desc,g.range,global,kott.addvars,kottby,kottby.user,kottcalibrate,
+kottdesign,kott.quantile,kott.ratio,kott.regcoef,pop.template,population.check)
