@@ -1,5 +1,5 @@
 `kott.regcoef` <- 
-function (deskott, model, by = NULL, 
+function (deskott, model, by = NULL, vartype = c("se", "cv", "cvpct", "var"), 
     conf.int = FALSE, conf.lev = 0.95) 
 ############################################################################################
 #  Calcola (su oggetti di classe kott.design) la stima dei coefficienti di regressione di  #
@@ -46,6 +46,10 @@ function (deskott, model, by = NULL,
     if ( (nrg - model.rank) < 1 )
         stop("Cannot estimate ",model.rank," coefficients with ",nrg," random groups (need ",
              1 + model.rank," at least)")
+    if (missing(vartype)) 
+        vartype <- "se"
+    vartype <- match.arg(vartype, several.ok = TRUE)
+    vartype <- unique(vartype)
     beta<-function(d,w,model,lhs){
     ################################################
     #  Calcola i coefficienti beta di regressione  #
@@ -60,20 +64,18 @@ function (deskott, model, by = NULL,
         q <- qr(rhs.mat)
         qr.coef(q,lhs.mat)
     }
-    out <- kottby.user(deskott = deskott, by = by, user.estimator = beta, 
+    out <- kottby.user(deskott = deskott, by = by, user.estimator = beta, vartype = vartype, 
                 conf.int = conf.int, conf.lev = conf.lev, df = attr(deskott, "nrg") - model.rank, 
                 model = model, lhs = lhs)
     # Formatta la lista out: un dataframe per ogni livello delle variabili di by (se specificate)
-    if (is.null(by))
-        {	
-         res <- as.data.frame(out, row.names = rownames(out[[1]]))
-         names(res) <- names(out)
-         res
-		}
-    else
-        {
-         res <- lapply(out, as.data.frame, row.names = rownames(out[[1]][[1]]))
-         for (i in seq_along(res)) {names(res[[i]]) <- names(out[[1]])}
-         res
-		}
+    if (is.null(by)) {	
+        res <- as.data.frame(out, row.names = rownames(out[[1]]))
+        names(res) <- names(out)
+        res
+    }
+    else {
+        res <- lapply(out, as.data.frame, row.names = rownames(out[[1]][[1]]))
+        for (i in seq_along(res)) {names(res[[i]]) <- names(out[[1]])}
+        res
+    }
 }

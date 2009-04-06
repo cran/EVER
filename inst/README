@@ -8,3 +8,5 @@ DISCLAIMER                      Important information for EVER package users.
 
 CITATION                        How to cite EVER package in pubblications.
                                 (In R type the command citation("EVER"))
+
+NEWS                            Change log

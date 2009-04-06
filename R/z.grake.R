@@ -30,8 +30,8 @@ function (sample.total, mm, ww, calfun, eta = rep(0, NCOL(mm)), bounds, populati
             break
         iter <- iter + 1
         if (iter > maxit) {
-            achieved <- (abs(misfit)/(1 + abs(population)))
-            worst.achieved <- max((abs(misfit)/(1 + abs(population))))
+            achieved <- abs(misfit)/(1 + abs(population))
+            worst.achieved <- max(achieved)
             warning("Failed to converge: eps= ", worst.achieved, " in ", 
                 iter, " iterations (variable ",names(which.max(achieved)),")")
             attr(g, "failed") <- achieved

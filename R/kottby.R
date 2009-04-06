@@ -1,6 +1,6 @@
 `kottby` <-
 function (deskott, y, by = NULL, estimator = c("total", "mean"),
-    conf.int = FALSE, conf.lev = 0.95)
+    vartype = c("se", "cv", "cvpct", "var"), conf.int = FALSE, conf.lev = 0.95)
 #######################################################################################
 #  Calcola (su oggetti di classe kott.design) le stime dei totali o delle medie       #
 #  di piu' variabili ed i corrispondenti errori standard ed intervalli di confidenza  #
@@ -44,12 +44,24 @@ function (deskott, y, by = NULL, estimator = c("total", "mean"),
         few.obs(deskott, by.charvect)
     }
     estimator <- match.arg(estimator)
+    if (missing(vartype)) 
+        vartype <- "se"
+    vartype <- match.arg(vartype, several.ok = TRUE)
+    vartype <- unique(vartype)
+    vartype.pos <- pmatch(vartype, eval(formals(sys.function())$vartype))
+    if (any(is.na(vartype.pos))) 
+        stop("Unavailable vartype")
+    variabilities <- function(se, cv, cvpct, var, which.one){
+        var.mat <- cbind(se, cv, cvpct, var)[, which.one, drop = FALSE]
+		colnames(var.mat) <- c("SE", "CV", "CV%", "Var")[which.one]
+        var.mat
+    }
     if (!is.logical(conf.int)) 
         stop("Parameter 'conf.int' must be logical")
     if (!is.numeric(conf.lev) || conf.lev < 0 || conf.lev > 1) 
         stop("conf.lev must be between 0 and 1")
-    kottby1 <- function(deskott, y, by = NULL, estimator, conf.int, 
-        conf.lev) {
+    kottby1 <- function(deskott, y, by = NULL, estimator, vartype.pos, 
+        conf.int, conf.lev) {
     #########################################################
     #  Calcola (su oggetti di classe kott.design) la stima  #
     #  del totale (o della media) di una sola variabile ed  #
@@ -62,22 +74,22 @@ function (deskott, y, by = NULL, estimator = c("total", "mean"),
     #        nrg-1 gradi di liberta'.                       #
     #########################################################
         if (is.null(by)) 
-            return(kottestim1(deskott, y, estimator, conf.int, 
+            return(kottestim1(deskott, y, estimator, vartype.pos, conf.int, 
                 conf.lev))
         dfby <- deskott[, by]
         yvect <- deskott[, y]
         if (is.numeric(yvect)) {
             out <- sapply(split(deskott, dfby, drop = TRUE), function(des) kottestim1(des, 
-                y, estimator, conf.int, conf.lev))
+                y, estimator, vartype.pos, conf.int, conf.lev))
             return(as.data.frame(out))
         }
         if (is.factor(yvect)) {
             out <- lapply(split(deskott, dfby, drop = TRUE), function(des) kottestim1(des, 
-                y, estimator, conf.int, conf.lev))
+                y, estimator, vartype.pos, conf.int, conf.lev))
             return(out)
         }
     }
-    kottestim1 <- function(deskott, y, estimator, conf.int, conf.lev) {
+    kottestim1 <- function(deskott, y, estimator, vartype.pos, conf.int, conf.lev) {
     #############################################################################
     #  Calcola (su oggetti di classe kott.design) la stima del totale o della   #
     #  media di una sola variabile ed il corrispondente errore standard (ed     #
@@ -121,7 +133,6 @@ function (deskott, y, by = NULL, estimator = c("total", "mean"),
         }
         nrg <- attr(deskott, "nrg")
         w <- attr(deskott, "weights")
-#       w.char <- as.character(w)[2]     OLD TO REMOVE
         w.char <- names(model.frame(w, deskott[1, ]))
         yvect <- deskott[, y]
         if (is.factor(yvect)) {
@@ -136,40 +147,50 @@ function (deskott, y, by = NULL, estimator = c("total", "mean"),
             # sempre T se yvect e' numeric, se yvect e' factor T solo se ha un unico livello non empty
             var <- ((nrg - 1)/nrg) * sum((er - e)^2)
             se <- sqrt(var)
+            cv <- se/e
+            cvpct <- 100*cv
+            vars <- rbind(variabilities(se = se, cv = cv, cvpct = cvpct, var = var, which.one = vartype.pos))
             if (!identical(conf.int, FALSE)) {
                 l.conf <- confidence(estim = e, se = se, df = (nrg - 
                   1), alpha = conf.lev)[1]
                 u.conf <- confidence(estim = e, se = se, df = (nrg - 
                   1), alpha = conf.lev)[2]
-                out <- cbind(e, se, l.conf, u.conf)
+                out <- cbind(e, vars, l.conf, u.conf)
+                l.conf.tag <- paste("l.conf(", round(100*conf.lev,1), "%)", sep="")
+                u.conf.tag <- paste("u.conf(", round(100*conf.lev,1), "%)", sep="")
                 dimnames(out) <- list(ifelse(!(is.factor(yvect)), 
-                  y, full.levname), c(estimator, "SE", "l.conf", 
-                  "u.conf"))
+                  y, full.levname), c(estimator, colnames(vars), l.conf.tag, 
+                  u.conf.tag))
             }
             else {
-                out <- cbind(e, se)
+                out <- cbind(e, vars)
                 dimnames(out) <- list(ifelse(!(is.factor(yvect)), 
-                  y, full.levname), c(estimator, "SE"))
+                  y, full.levname), c(estimator, colnames(vars)))
             }
             return(as.data.frame(out))
         }
         else {
             ecol <- cbind(e)
             emat <- matrix(ecol, nrow(er), ncol(er))
-            var <- ((nrg - 1)/nrg) * rowSums((er - emat)^2)
-            se <- cbind(sqrt(var))
+            var <- cbind(((nrg - 1)/nrg) * rowSums((er - emat)^2))
+            se <- sqrt(var)
+            cv <- se/ecol
+            cvpct <- 100*cv
+            vars <- variabilities(se = se, cv = cv, cvpct = cvpct, var = var, which.one = vartype.pos)
             if (!identical(conf.int, FALSE)) {
                 l.conf <- confidence(estim = ecol, se = se, df = (nrg - 
                   1), alpha = conf.lev)[, 1]
                 u.conf <- confidence(estim = ecol, se = se, df = (nrg - 
                   1), alpha = conf.lev)[, 2]
-                out <- cbind(ecol, se, l.conf, u.conf)
-                colnames(out) <- c(estimator, "SE", "l.conf", 
-                  "u.conf")
+                out <- cbind(ecol, vars, l.conf, u.conf)
+                l.conf.tag <- paste("l.conf(", round(100*conf.lev,1), "%)", sep="")
+                u.conf.tag <- paste("u.conf(", round(100*conf.lev,1), "%)", sep="")
+                colnames(out) <- c(estimator, colnames(vars), l.conf.tag, 
+                  u.conf.tag)
             }
             else {
-                out <- cbind(ecol, cbind(se))
-                colnames(out) <- c(estimator, "SE")
+                out <- cbind(ecol, vars)
+                colnames(out) <- c(estimator, colnames(vars))
             }
             rownames(out) <- full.levname
             return(as.data.frame(out))
@@ -177,11 +198,11 @@ function (deskott, y, by = NULL, estimator = c("total", "mean"),
     }
     if (identical(by, NULL)) {
         out <- lapply(y.charvect, function(y) kottby1(deskott, 
-            y, by, estimator, conf.int, conf.lev))
+            y, by, estimator, vartype.pos, conf.int, conf.lev))
     }
     else {
         out <- lapply(y.charvect, function(y) kottby1(deskott, 
-            y, by.charvect, estimator, conf.int, conf.lev))
+            y, by.charvect, estimator, vartype.pos, conf.int, conf.lev))
     }
     names(out) <- y.charvect
     if (length(out) == 1) 

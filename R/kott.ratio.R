@@ -1,5 +1,6 @@
 `kott.ratio` <-
-function (deskott, num, den, by = NULL, conf.int = FALSE, conf.lev = 0.95)
+function (deskott, num, den, by = NULL, vartype = c("se", "cv", "cvpct", "var"), 
+    conf.int = FALSE, conf.lev = 0.95)
 #######################################################################################
 #  Calcola (su oggetti di classe kott.design) la stima del rapporto fra totali        #
 #  (o medie) di variabili numeriche ed i corrispondenti errori standard               #
@@ -31,6 +32,10 @@ function (deskott, num, den, by = NULL, conf.int = FALSE, conf.lev = 0.95)
         stop("Denominator variables must be numeric")
     #if (length(num.char)!=length(den.char))
     #   warning("Different number of variables for numerator and denominator: recycling rule")
+    if (missing(vartype)) 
+        vartype <- "se"
+    vartype <- match.arg(vartype, several.ok = TRUE)
+    vartype <- unique(vartype)
     ratio <- function(d, w, num, den) {
     #############################################
     #  Stimatore rapporto fra totali (o medie)  #
@@ -51,10 +56,17 @@ function (deskott, num, den, by = NULL, conf.int = FALSE, conf.lev = 0.95)
         out
     }
     out <- kottby.user(deskott = deskott, by = by, user.estimator = ratio, 
-        conf.int = conf.int, conf.lev = conf.lev, df = attr(deskott, "nrg") - 1, 
+        vartype = vartype, conf.int = conf.int, conf.lev = conf.lev, df = attr(deskott, "nrg") - 1, 
         num = num.char, den = den.char)
     # Formatta la lista out: un dataframe per ogni livello delle variabili di by (se specificate)
-    if (is.null(by)) 
-        as.data.frame(out, row.names = names(out[[1]]))
-    else lapply(out, as.data.frame, row.names = names(out[[1]][[1]]))
+    if (is.null(by)) {
+        res <- as.data.frame(out, row.names = names(out[[1]]))
+        names(res) <- names(out)
+        res
+    }
+    else {
+        res <- lapply(out, as.data.frame, row.names = names(out[[1]][[1]]))
+        for(i in seq_along(res)) {colnames(res[[i]]) <- names(out[[1]])}
+        res
+    }
 }

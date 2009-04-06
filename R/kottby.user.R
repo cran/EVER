@@ -1,6 +1,7 @@
 `kottby.user` <-
 function (deskott, by = NULL, user.estimator, na.replace = NULL, 
-    conf.int = FALSE, conf.lev = 0.95, df = attr(deskott, "nrg") - 1, ...)
+    vartype = c("se", "cv", "cvpct", "var"), conf.int = FALSE, conf.lev = 0.95, 
+    df = attr(deskott, "nrg") - 1, ...)
 #############################################################################
 #  Calcola, su oggetti di classe kott.design, la stima, l'errore standard   #
 #  e l'intervallo di confidenza di uno stimatore arbitrario (anche privo    #
@@ -61,6 +62,18 @@ function (deskott, by = NULL, user.estimator, na.replace = NULL,
             stop("'by' variables must be factor")
         few.obs(deskott, by.charvect)
     }
+    if (missing(vartype)) 
+        vartype <- "se"
+    vartype <- match.arg(vartype, several.ok = TRUE)
+    vartype <- unique(vartype)
+    vartype.pos <- pmatch(vartype, eval(formals(sys.function())$vartype))
+    if (any(is.na(vartype.pos))) 
+        stop("Unavailable vartype")
+    variabilities <- function(se, cv, cvpct, var, which.one){
+        var.list <- list(se, cv, cvpct, var)[which.one, drop = FALSE]
+		names(var.list) <- c("SE", "CV", "CV%", "Var")[which.one]
+        var.list
+    }
     if (!is.logical(conf.int)) 
         stop("Parameter 'conf.int' must be logical")
     if (!is.numeric(conf.lev) || conf.lev < 0 || conf.lev > 1) 
@@ -74,7 +87,7 @@ function (deskott, by = NULL, user.estimator, na.replace = NULL,
             stop("Need at least 1 degree of freedom")
     }
     kottestim <- function(deskott, user.estimator, na.replace = NULL, 
-        conf.int, conf.lev, df, ...) {
+        vartype.pos, conf.int, conf.lev, df, ...) {
     #############################################################################
     #  Calcola, su oggetti di classe kott.design, la stima, l'errore standard   #
     #  e l'intervallo di confidenza di uno stimatore arbitrario (anche privo    #
@@ -84,7 +97,6 @@ function (deskott, by = NULL, user.estimator, na.replace = NULL,
     #############################################################################
         nrg <- attr(deskott, "nrg")
         w <- attr(deskott, "weights")
-#       w.char <- as.character(w)[2]     OLD TO REMOVE
         w.char <- names(model.frame(w, deskott[1, ]))
         e <- user.estimator(deskott, w.char, ...)
         e <- as.array(e)
@@ -95,37 +107,54 @@ function (deskott, by = NULL, user.estimator, na.replace = NULL,
         diff2 <- (er - ecycle)^2
         var <- ((nrg - 1)/nrg) * apply(diff2, 1:length(dim(e)), 
             sum)
+        var <- as.array(var)
+        dimnames(var) <- dimnames(e)
         se <- sqrt(var)
-        se <- as.array(se)
         dimnames(se) <- dimnames(e)
+        cv <- se/e
+        dimnames(cv) <- dimnames(e)
+        cvpct <- 100*cv
+        dimnames(cvpct) <- dimnames(e)
+        vars <- variabilities(se = se, cv = cv, cvpct = cvpct, var = var, which.one = vartype.pos)
         if (!identical(conf.int, FALSE)) {
             l.conf <- array(mapply(FUN = confidence, e, se, MoreArgs = list(df = df, 
                 alpha = conf.lev))[1, ], dim = dim(e))
             dimnames(l.conf) <- dimnames(e)
+            l.conf.tag <- paste("l.conf(", round(100*conf.lev,1), "%)", sep="")
             u.conf <- array(mapply(FUN = confidence, e, se, MoreArgs = list(df = df, 
                 alpha = conf.lev))[2, ], dim = dim(e))
             dimnames(u.conf) <- dimnames(e)
+            u.conf.tag <- paste("u.conf(", round(100*conf.lev,1), "%)", sep="")
         }
         if (!is.null(na.replace)) {
             e[is.na(e)] <- na.replace
+            var[is.na(var)] <- na.replace
             se[is.na(se)] <- na.replace
+            cv[is.na(cv)] <- na.replace
+            cvpct[is.na(cvpct)] <- na.replace
             if (!identical(conf.int, FALSE)) {
                 l.conf[is.na(l.conf)] <- na.replace
                 u.conf[is.na(u.conf)] <- na.replace
             }
         }
         if (!identical(conf.int, FALSE)) {
-            list(estimate = e, SE = se, l.conf = l.conf, u.conf = u.conf)
+            estimate <- list(estimate = e)
+			l.conf <- list(l.conf); names(l.conf) <- l.conf.tag
+            u.conf <- list(u.conf); names(u.conf) <- u.conf.tag
+            c(estimate, vars, l.conf, u.conf)
         }
-        else list(estimate = e, SE = se)
+        else {
+            estimate <- list(estimate = e)
+            c(estimate, vars)
+        }
     }
     if (identical(by, NULL)) {
-        kottestim(deskott, user.estimator, na.replace, conf.int, 
-            conf.lev, df, ...)
+        kottestim(deskott, user.estimator, na.replace, vartype.pos, 
+            conf.int, conf.lev, df, ...)
     }
     else {
         dfby <- deskott[, by.charvect, drop = FALSE]
         lapply(split(deskott, dfby, drop = TRUE), function(des) kottestim(des, 
-            user.estimator, na.replace, conf.int, conf.lev, df, ...))
+            user.estimator, na.replace, vartype.pos, conf.int, conf.lev, df, ...))
     }
 }

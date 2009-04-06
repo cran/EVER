@@ -37,7 +37,7 @@ As an alternative, the user can attend to develop by himself the appropriate ide
 
 The optional argument \code{check.data} allows to check the correct nesting of \code{data} clusters (PSUs, SSUs, \ldots). If \code{check.data=TRUE} the function checks that every unit selected at stage \code{k+1} is associated to one and only one unit selected at stage \code{k}. For a stratified design the function checks also the correct nesting of clusters within strata.
 
-The optional argument \code{aux} can usually be ignored: his default value selects the standard behaviour of the function. Invoking \code{kottdesign} with \code{aux=TRUE} can, on the other hand, prove useful for any user who intends fully understanding how the DAGJK method builds the replicate weights. If \code{aux=TRUE}, the output data frame contains auxiliary columns that provide: the number of PSUs per stratum, the number of PSUs per stratum and random group and the multiplicative coefficients that transform the initial weights into replicate weights.
+The optional argument \code{aux} can usually be ignored: its default value selects the standard behaviour of the function. Invoking \code{kottdesign} with \code{aux=TRUE} can, on the other hand, prove useful for any user who wants to fully understand how the DAGJK method builds the replicate weights. If \code{aux=TRUE}, the output data frame contains auxiliary columns that provide: the number of PSUs per stratum, the number of PSUs per stratum and random group and the multiplicative coefficients that transform the initial weights into replicate weights.
 }
 \value{
 An object of class \code{kott.design}. The data frame it contains includes (in addition to the original survey data):
@@ -63,11 +63,11 @@ Kott, Phillip S. (1999) \emph{"The Extended Delete-A-Group Jackknife"}. Bulletin
 Kott, Phillip S. (2001) \emph{"The Delete-A-Group Jackknife"}. Journal of Official Statistics, Vol.17, No.4, pp. 521-526.
 }
 \seealso{
-\code{\link{desc}} for a concise description of \code{kott.design} objects, \code{\link{kottby}}, \code{\link{kott.ratio}}, \code{\link{kott.quantile}} and \code{\link{kottby.user}} for calculating estimates and standard errors, \code{\link{kottcalibrate}} for calibrating replicate weights.
+\code{\link{desc}} for a concise description of \code{kott.design} objects, \code{\link{kottby}}, \code{\link{kott.ratio}}, \code{\link{kott.regcoef}}, \code{\link{kott.quantile}} and \code{\link{kottby.user}} for calculating estimates and standard errors, \code{\link{kottcalibrate}} for calibrating replicate weights.
 }
 \examples{
 # Creation of kott.design objects starting with survey data sampled
-# with different sampling designs (in reality the survey data frame is
+# with different sampling designs (actually the survey data frame is
 # always the same: the examples serve the purpose of illustrating
 # the syntax).
 
@@ -88,7 +88,7 @@ desc(kdes)
 
 
 # Same design, but using the self.rep.str argument to identify
-# the SR strata (in reality towcod identifies the
+# the SR strata (actually towcod identifies the
 # "variance PSUs" by construction):
 kdes<-kottdesign(data=example,ids=~towcod+famcod,strata=~SUPERSTRATUM,
       weights=~weight,nrg=15,self.rep.str=~sr)

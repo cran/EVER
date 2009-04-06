@@ -1,0 +1,25 @@
+***************
+*  EVER 1.1   *
+***************
+
+-- kottby, kottby.user, kott.ratio, kott.quantile, kott.regcoef: NEW argument 'vartype' allows to request every
+                                                                 possible combination of: SE, CV, CV%, Var
+
+-- NEW bounds.hint function: helps the user when performing range restricted calibration. Suggests a sound
+                             'bounds' value for which kottcalibrate is likely to converge.
+
+-- g.range BUG fix: g-weights lower value was erroneously 0 whenever there was a zero calibration weight
+                    corresponding to a non zero direct weight (thus erroneously missing possible negative
+                    g-weights).
+
+-- Typo in a kottcalibrate message ('prameter')
+
+-- Help page for population.check missed a \code{} around a 'kottcalibrate' and had 2 'deskott' instead of
+   'data'
+
+
+***************
+*  EVER 1.0   *
+***************
+
+-- INITIAL RELEASE ON CRAN

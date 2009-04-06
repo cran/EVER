@@ -20,15 +20,15 @@ The mandatory argument \code{df.population} identifies the known totals data fra
 
 The mandatory argument \code{data} identifies the survey data frame on which the calibration problem is defined (or, as an alternative, a \code{kott.design} object built upon that data frame).
 
-The mandatory argument \code{calmodel} symbolically defines the calibration model you intend using: it identifies the auxiliary variables and the constraints for the calibration problem. The \code{deskott} variables referenced by \code{calmodel} must be \code{numeric} or \code{factor} and must not contain any missing value (\code{NA}).
+The mandatory argument \code{calmodel} symbolically defines the calibration model you want to use: it identifies the auxiliary variables and the constraints for the calibration problem. The \code{data} variables referenced by \code{calmodel} must be \code{numeric} or \code{factor} and must not contain any missing value (\code{NA}).
 
-The optional argument \code{partition} specifies the variables that define the calibration domains for the model. The default value (\code{FALSE}) means either that there are not calibration domains or that you want to solve the problem globally (even though it could be factorised). If a formula is passed through the \code{partition} argument the program checks that \code{calmodel} actually describes a "reduced model", that is it does not reference any of the partition variables; if this is not the case, the program stops and prints an error message. The \code{deskott} variables referenced by \code{partition} (if any) must be \code{factor} and must not contain any missing value (\code{NA}).
+The optional argument \code{partition} specifies the variables that define the calibration domains for the model. The default value (\code{FALSE}) means either that there are not calibration domains or that you want to solve the problem globally (even though it could be factorised). If a formula is passed through the \code{partition} argument the program checks that \code{calmodel} actually describes a "reduced model", that is it does not reference any of the partition variables; if this is not the case, the program stops and prints an error message. The \code{data} variables referenced by \code{partition} (if any) must be \code{factor} and must not contain any missing value (\code{NA}).
 }
 \value{
 An invisibile object of class \code{pop.totals}. The \code{pop.totals} class is a specialisation of the \code{data.frame} class; this means that an object built by \code{pop.template} inherits from the \code{data.frame} class and you can use on it every method defined on that class.
 }
 \note{
-The \code{population.check} function can be used to convert a known totals data frame that conforms to the standard required by kottcalibrate into an object of class \code{pop.totals}. The usefulness of this conversion lies in the fact that, once you have known totals with this "certified format", you can invoke \code{kottcalibrate} without specifying the values for the \code{calmodel} and \code{partition} arguments (this means that the function is able to extract them directly from the attributes of the \code{pop.totals} object). 
+The \code{population.check} function can be used to convert a known totals data frame that conforms to the standard required by \code{kottcalibrate} into an object of class \code{pop.totals}. The usefulness of this conversion lies in the fact that, once you have known totals with this "certified format", you can invoke \code{kottcalibrate} without specifying the values for the \code{calmodel} and \code{partition} arguments (this means that the function is able to extract them directly from the attributes of the \code{pop.totals} object). 
 }
 \author{Diego Zardetto}
 \seealso{
@@ -37,7 +37,7 @@ The \code{population.check} function can be used to convert a known totals data 
 \examples{
 data(data.examples)
 
-# Suppose you have to calibrate the esempio survey data frame
+# Suppose you have to calibrate the example survey data frame
 # on the totals of x1 by sex and you want the iterative solution.
 # Start creating a kott.design object:
 kdes<-kottdesign(data=example,ids=~towcod+famcod,strata=~SUPERSTRATUM,

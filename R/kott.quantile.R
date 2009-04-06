@@ -1,6 +1,6 @@
 `kott.quantile` <- 
 function (deskott, y, probs = c(0.25, 0.5, 0.75), by = NULL, 
-    conf.int = FALSE, conf.lev = 0.95) 
+    vartype = c("se", "cv", "cvpct", "var"), conf.int = FALSE, conf.lev = 0.95) 
 #######################################################################################
 #  Calcola (su oggetti di classe kott.design) la stima dei quantili di una variabile  #
 #  numerica ed i corrispondenti errori standard ed intervalli di confidenza, nelle    #
@@ -28,6 +28,10 @@ function (deskott, y, probs = c(0.25, 0.5, 0.75), by = NULL,
         stop("Variables of interest must be numeric")
     if (any(probs < 0 | probs > 1)) 
         stop("'probs' values must be between 0 and 1")
+    if (missing(vartype)) 
+        vartype <- "se"
+    vartype <- match.arg(vartype, several.ok = TRUE)
+    vartype <- unique(vartype)
     w.quantiles <- function(d, w, y, probs) {
     #########################################################
     #  Calcolo della stima campionaria dei quantili di una  #
@@ -115,10 +119,17 @@ function (deskott, y, probs = c(0.25, 0.5, 0.75), by = NULL,
         out
     }
     out <- kottby.user(deskott = deskott, by = by, user.estimator = w.quantiles, 
-        conf.int = conf.int, conf.lev = conf.lev, df = attr(deskott, "nrg") - 1, 
+        vartype = vartype, conf.int = conf.int, conf.lev = conf.lev, df = attr(deskott, "nrg") - 1, 
         y = y.char, probs = probs)
     # Formatta la lista out: un dataframe per ogni livello delle variabili di by (se specificate)
-    if (is.null(by)) 
-        as.data.frame(out, row.names = names(out[[1]]))
-    else lapply(out, as.data.frame, row.names = names(out[[1]][[1]]))
+    if (is.null(by)) {
+        res <- as.data.frame(out, row.names = names(out[[1]]))
+        names(res) <- names(out)
+        res
+    }
+    else {
+        res <- lapply(out, as.data.frame, row.names = names(out[[1]][[1]]))
+        for(i in seq_along(res)) {colnames(res[[i]]) <- names(out[[1]])}
+        res
+    }
 }

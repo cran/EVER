@@ -17,7 +17,7 @@ This function creates an object of class \code{pop.totals}. A \code{pop.totals} 
 
 The mandatory argument \code{data} must identify the survey data frame on which the calibration problem is defined (or, as an alternative, a \code{kott.design} object built upon that data frame). 
 
-The mandatory argument \code{calmodel} symbolically defines the calibration model you intend using: it identifies the auxiliary variables and the constraints for the calibration problem. The \code{deskott} variables referenced by \code{calmodel} must be \code{numeric} or \code{factor} and must not contain any missing value (\code{NA}).
+The mandatory argument \code{calmodel} symbolically defines the calibration model you want to use: it identifies the auxiliary variables and the constraints for the calibration problem. The \code{deskott} variables referenced by \code{calmodel} must be \code{numeric} or \code{factor} and must not contain any missing value (\code{NA}).
 
 The optional argument \code{partition} specifies the variables that define the calibration domains for the model. The default value (\code{FALSE}) means either that there are not calibration domains or that you want to solve the problem globally (even though it could be factorised). If a formula is passed through the \code{partition} argument the program checks that \code{calmodel} actually describes a "reduced model", that is it does not reference any of the partition variables; if this is not the case, the program stops and prints an error message. The \code{deskott} variables referenced by \code{partition} (if any) must be \code{factor} and must not contain any missing value (\code{NA}).
 }

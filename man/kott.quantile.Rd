@@ -6,6 +6,7 @@ Calculates estimates, standard errors and confidence intervals for quantiles in 
 }
 \usage{
 kott.quantile(deskott, y, probs = c(0.25,0.50,0.75), by = NULL,
+              vartype = c("se", "cv", "cvpct", "var"), 
               conf.int = FALSE, conf.lev = 0.95)
 }
 \arguments{
@@ -13,6 +14,7 @@ kott.quantile(deskott, y, probs = c(0.25,0.50,0.75), by = NULL,
   \item{y}{Formula defining the variable of interest.}
   \item{probs}{Vector of probability values to be used to calculate the quantiles estimates. The default value selects the quartiles estimates.} 
   \item{by}{Formula specifying the variables that define the "estimation domains". If \code{NULL} (the default option) estimates refer to the whole population.}
+  \item{vartype}{\code{character} vector specifying the desired variability estimators. It is possible to choose one or more of: standard error (the default), coefficient of variation, percent coefficient of variation, or variance.}
   \item{conf.int}{Boolean (\code{logical}) value to request confidence intervals for the estimates: the default is \code{FALSE}.}
   \item{conf.lev}{Probability specifying the desired confidence level: the default value is \code{0.95}.}
 }

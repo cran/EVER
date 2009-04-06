@@ -35,7 +35,7 @@ kdes2<-kott.addvars(kdes,population=1)
 kottby(kdes2,~population)
 
 # Recoding a qualitative variable:
-kdes2<-kott.addvars(kdes,agerange=as.factor(ifelse(kdes$age5c==1,
+kdes2<-kott.addvars(kdes,agerange=as.factor(ifelse(age5c==1,
                                             "young","not-young")))
 kottby(kdes2,~agerange,est="mean")
 kottby(kdes2,~income,~agerange,estimator="mean",conf.int=TRUE)

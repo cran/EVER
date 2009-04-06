@@ -26,7 +26,7 @@ function (cal.deskott)
             ranger[2] <- Inf
         # check: ci sono pesi finali nulli corrispondenti a pesi iniziali non nulli?
         if (any(w.calr[wr.notzero] == 0)) 
-            ranger[1] <- 0
+            ranger[1] <- min(0, ranger[1])
         ranger
     }
     # original data
@@ -36,7 +36,7 @@ function (cal.deskott)
     lapply(1:nrg, function(r) out.matrix <<- rbind(out.matrix,
         range.r(cal.deskott, w.char, w.cal.char, r)))
     dimnames(out.matrix) <- list(NULL, c("g.min", "g.max"))
-    names.col <- data.frame(sample = c("original", paste("replica.",
+    names.col <- data.frame(sample = c("original", paste("replicate.",
         1:nrg, sep = "")))
     cbind(names.col, out.matrix)
 }

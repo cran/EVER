@@ -5,14 +5,16 @@
 Calculates estimates, standard errors and confidence intervals for ratios between totals in subpopulations.
 }
 \usage{
-kott.ratio(deskott, num, den, by = NULL, conf.int = FALSE,
-           conf.lev = 0.95)
+kott.ratio(deskott, num, den, by = NULL, 
+           vartype = c("se", "cv", "cvpct", "var"), 
+           conf.int = FALSE, conf.lev = 0.95)
 }
 \arguments{
   \item{deskott}{Object of class \code{kott.design} containing the replicated survey data.}
   \item{num}{Formula defining the numerator variables for the ratio estimator.}
   \item{den}{Formula defining the denominator variables for the ratio estimator.}
   \item{by}{Formula specifying the variables that define the "estimation domains". If \code{NULL} (the default option) estimates refer to the whole population.}
+  \item{vartype}{\code{character} vector specifying the desired variability estimators. It is possible to choose one or more of: standard error (the default), coefficient of variation, percent coefficient of variation, or variance.}
   \item{conf.int}{Boolean (\code{logical}) value to request confidence intervals for the estimates: the default is \code{FALSE}.}
   \item{conf.lev}{Probability specifying the desired confidence level: the default value is \code{0.95}.}
 }

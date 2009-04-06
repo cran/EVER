@@ -40,7 +40,7 @@ The main data frame, named \code{example}, contains (artificial) data from a two
     \item{\code{age10c}}{Age variable with 10 classes, \code{factor} with levels \code{1} \code{2} \code{3} \code{4} \code{5} \code{6} \code{7} \code{8} \code{9} \code{10}}
     \item{\code{sex}}{Sex variable, \code{factor} with levels \code{f} \code{m}}
     \item{\code{marstat}}{Marital status variable, \code{factor} with levels \code{married} \code{unmarried} \code{widowed}}
-    \item{\code{z}}{A continuus quantitative variable, \code{numeric}}
+    \item{\code{z}}{A continuous quantitative variable, \code{numeric}}
 	\item{\code{income}}{Income variable, \code{numeric}}
   }
 }

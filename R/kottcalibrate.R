@@ -55,7 +55,7 @@ function (deskott, df.population,
             calmodel, partition)
     }
     if (!is.logical(force.rep)) 
-        stop("Prameter 'force.rep' must be logical")
+        stop("Parameter 'force.rep' must be logical")
     if (is.character(calfun)) 
         calfun <- match.arg(calfun)
     if (calfun=="logit") {
@@ -92,7 +92,7 @@ function (deskott, df.population,
     ############################################################
         tasks <- nrg+1
         parts <- nrow(df.population)
-        rownam <- c("original", paste("replica.",1:nrg, sep = ""))
+        rownam <- c("original", paste("replicate.",1:nrg, sep = ""))
         colnam <- if (identical(partition,FALSE)) "global" else partition.names
         ret.cod <- matrix(-1, nrow = tasks, ncol = parts, dimnames = list(rownam, colnam))
         assign("kottcal.status", list(call = sys.call(-1), return.code = ret.cod), envir = .GlobalEnv)

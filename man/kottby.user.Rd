@@ -8,6 +8,7 @@ Calculates estimates, standard errors and confidence intervals for user-defined 
 }
 \usage{
 kottby.user(deskott, by = NULL, user.estimator, na.replace = NULL,
+            vartype = c("se", "cv", "cvpct", "var"), 
             conf.int = FALSE, conf.lev = 0.95, 
             df = attr(deskott, "nrg") - 1, ...)
 
@@ -18,6 +19,7 @@ global(deskott)
   \item{by}{Formula specifying the variables that define the "estimation domains". If \code{NULL} (the default option) estimates refer to the whole population.}
   \item{user.estimator}{\R function to compute the value of the desired estimator on the original survey sample (see also 'Details' and 'Defining a user estimator function').}
   \item{na.replace}{Value to be used to replace any \code{NA}s in the output estimates (see 'Details').}
+  \item{vartype}{\code{character} vector specifying the desired variability estimators. It is possible to choose one or more of: standard error (the default), coefficient of variation, percent coefficient of variation, or variance.}
   \item{conf.int}{Boolean (\code{logical}) value to request confidence intervals for the estimates: the default is \code{FALSE}.}
   \item{conf.lev}{Probability specifying the desired confidence level: the default value is \code{0.95}.}
   \item{df}{Degrees of freedom for the t distribution used to build confidence intervals (see 'Details').}

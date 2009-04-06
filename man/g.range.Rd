@@ -2,7 +2,7 @@
 \alias{g.range}
 \title{Range of g-weights}
 \description{
-Computes the range of the ratios between calibrated weights and direct weights (\emph{g-weights}) for the original sample and all his replicates.
+Computes the range of the ratios between calibrated weights and direct weights (\emph{g-weights}) for the original sample and all its replicates.
 }
 \usage{
 g.range(cal.deskott)
@@ -11,14 +11,14 @@ g.range(cal.deskott)
   \item{cal.deskott}{Object of class \code{kott.cal.design}.}
 }
 \details{
-This function computes, for the original sample and all his replicates, the smallest interval which contains the ratios between calibrated weights and direct weights.
+This function computes, for the original sample and all its replicates, the smallest interval which contains the ratios between calibrated weights and direct weights.
 }
 \value{
 A \code{data.frame} object.
 }
 \author{Diego Zardetto}
 \seealso{
-\code{\link{kottcalibrate}} for calibrating replicate weights.
+\code{\link{kottcalibrate}} for calibrating replicate weights and \code{\link{bounds.hint}} to obtain an hint for calibration problems where range restrictions are imposed on the \emph{g-weights}.
 }
 \examples{
 data(data.examples)
