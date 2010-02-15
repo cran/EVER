@@ -1,5 +1,5 @@
 `population.check` <-
-function (df.population, data, calmodel, partition)
+function (df.population, data, calmodel, partition = FALSE)
 ####################################################################
 #  Verifica se un dataframe di totali noti di popolazione sia,     #
 #  o non sia, conforme allo standard richiesto da kottcalibrate    #

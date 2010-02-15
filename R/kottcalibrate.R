@@ -54,6 +54,8 @@ function (deskott, df.population,
         df.population <- population.check(df.population, deskott, 
             calmodel, partition)
     }
+    if ( !is.numeric(bounds) || (bounds[1] > 1) || (1 > bounds[2]) )
+        stop("Bounds must be numeric and must satisfy bounds[1] <= 1 <= bounds[2]")
     if (!is.logical(force.rep)) 
         stop("Parameter 'force.rep' must be logical")
     if (is.character(calfun)) 

@@ -9,7 +9,7 @@ function (cal.deskott)
         stop("Object ", substitute(cal.deskott), " must be of class kott.cal.design")
     nrg <- attr(cal.deskott, "nrg")
     w.cal.char <- as.character(attr(cal.deskott, "weights"))[2]
-    w.char <- unlist(strsplit(w.cal.char, ".cal"))
+    w.char <- substr(w.cal.char, 0, nchar(w.cal.char) - 4)
     range.r <- function(cal.deskott, w, w.cal, r) {
     ################################################
     #  Dato un oggetto di classe kott.cal.design,  #

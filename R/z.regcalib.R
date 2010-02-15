@@ -17,7 +17,7 @@ function (design, formula, population, aggregate.stage = NULL)
     if (any(sample.total == 0)) {
         zz <- (population == 0) & (apply(mm, 2, function(x) all(x == 
             0)))
-        mm <- mm[, !zz]
+        mm <- mm[, !zz, drop = FALSE]
         population <- population[!zz]
         sample.total <- sample.total[!zz]
     }

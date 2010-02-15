@@ -202,7 +202,9 @@ mid <- (smallest+greatest)/2
 L <- mid - 2*(mid-smallest)
 U <- mid + 2*(greatest-mid)
 L.sugg <- round(L,3)
+if ( isTRUE(all.equal(L.sugg, 1)) ) L.sugg <- (L.sugg - 1E-3)
 U.sugg <- round(U,3)
+if ( isTRUE(all.equal(U.sugg, 1)) ) U.sugg <- (U.sugg + 1E-3)
 
 suggestion <- c(L.sugg, U.sugg)
 attr(suggestion, "star.interval") <- c(smallest, greatest)
@@ -214,7 +216,7 @@ cat(paste("Feasible bounds for calibration problem must cover the interval [",
 cat("\n")
 cat(paste("A starting suggestion: try to calibrate with bounds=c(",
            L.sugg, ", ", U.sugg, ")\n", sep=""))
-cat("Remark: this is just an hint, not an exact result\n")
+cat("Remark: this is just a hint, not an exact result\n")
 cat("\n")
 
 invisible(suggestion)

@@ -5,7 +5,7 @@
 Checks whether a known population totals data frame conforms to the standard required by \code{kottcalibrate} for a specific calibration problem. 
 }
 \usage{
-population.check(df.population, data, calmodel, partition)
+population.check(df.population, data, calmodel, partition = FALSE)
 }
 \arguments{
   \item{df.population}{Data frame of known population totals.}

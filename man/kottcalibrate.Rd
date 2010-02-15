@@ -59,7 +59,7 @@ If the number of replicates for \code{deskott} is \code{nrg}, the function \code
 \item{\code{0}}{solved sub-problem (convergence achieved);}
 \item{\code{1}}{unsolved sub-problem (no convergence): output forced.}
 }
-Remember that the latter return code may only occur if \code{force.rep = TRUE}.\cr
+Recall that the latter return code may only occur if \code{force.rep = TRUE}.\cr
 In case of error, users can exploit \code{kottcal.status} to identify the sub-problem from which the error stemmed, hence taking a step forward to eliminate it.
 }
 \value{

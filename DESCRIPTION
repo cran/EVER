@@ -8,12 +8,12 @@ Description: Delete-A-Group Jackknife replication. Calibration of
         regression coefficients. Estimates, standard errors and
         confidence intervals for user-defined estimators (even
         non-analytic). Domain (subpopulation) estimation.
-Version: 1.1
+Version: 1.1.1
 Author: Diego Zardetto
 Maintainer: Diego Zardetto <zardetto@istat.it>
 License: file LICENCE
 Depends: R (>= 2.5.1)
 Suggests: MASS
-Packaged: Mon Apr 6 12:00:31 2009; zardetto
+Packaged: 2010-02-15 15:17:43 UTC; zardetto
 Repository: CRAN
-Date/Publication: 2009-04-14 17:25:58
+Date/Publication: 2010-02-15 17:03:50

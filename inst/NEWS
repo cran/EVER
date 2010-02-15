@@ -1,4 +1,16 @@
 ***************
+*  EVER 1.2   *
+***************
+
+-- kottcalibrate: minor bug fixed (added drop = FALSE in mm[ , !zz, drop = FALSE])
+-- kottcalibrate: checks added on bounds (must be numeric and must satisfy bounds[1] <= 1 <= bounds[2])
+-- population.check: default value (FALSE) for 'partition' argument was lacking, despite documented.
+-- g.range: minor bug (was not working for objects that have undergone subsequent calibrations, due to
+            erroneous name reconstruction of last but one weights)
+-- LICENCE: removed non ASCII characters
+
+
+***************
 *  EVER 1.1   *
 ***************
 
