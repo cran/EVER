@@ -14,7 +14,7 @@ if (identical(by.char, NULL))
      return(invisible(NULL))
     }
 survey.by <- split(survey, survey[, by.char], drop = TRUE)	
-sapply(seq_along(along = survey.by),
+sapply(seq_along(along.with = survey.by),
        function(i) if (nrow(survey.by[[i]]) < 10) 
                        warning("Less than 10 observations from subpopulation: ",
                                 names(survey.by)[i], call. = FALSE))

@@ -29,7 +29,7 @@ The argument \code{calmodel} symbolically defines the calibration model you want
 The optional argument \code{partition} specifies the variables that define the calibration domains for the model. The default value (\code{FALSE}) means either that there are not calibration domains or that you want to solve the problem globally (even though it could be factorised). The \code{deskott} variables referenced by \code{partition} (if any) must be \code{factor} and must not contain any missing value (\code{NA}). The argument can be omitted provided \code{df.population} is an object of class \code{pop.totals} (see \code{\link{population.check}}).
 }
 \value{
-A numeric vector of length 2, representing the \emph{suggested} value for the \code{bounds} argument of \code{kottcalibrate}. A numeric vector of length 2, representing the \emph{suggested} value for the \code{bounds} argument of \code{e.calibrate}. The attributes of that vector store additional information, which can lead to better understand why a given calibration problem is (un)feasible (see 'Experiments').
+A numeric vector of length 2, representing the \emph{suggested} value for the \code{bounds} argument of \code{kottcalibrate}. The attributes of that vector store additional information, which can lead to better understand why a given calibration problem is (un)feasible (see 'Examples').
 }
 \note{
 Assessing the feasibility of an arbitrary calibration problem is not an easy task. The problem is even more difficult whenever additional \emph{"range restrictions"} are imposed. Indeed, even if one assumes that the calibration constraints define a consistent system, one also has to choose the \code{bounds} such that the feasible region is non-empty.

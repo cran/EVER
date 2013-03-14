@@ -37,7 +37,7 @@ function (df.population, data, calmodel, partition = FALSE)
             "factor"), drop = FALSE])
         df.population.factor <- data.frame(df.population[, test.var.class(df.population, 
             "factor"), drop = FALSE])
-        if (!identical(df.population.factor, template.factor)){
+        if (!identical(as.matrix(df.population.factor), as.matrix(template.factor))){
             stop.fact <- paste("Columns of data frame ", substitute(df.population)," defining calibration domains\ndoes not agree with 'calmodel' and 'partition' formulas\n(to solve the problem use pop.template)")
             stop(stop.fact)
         }

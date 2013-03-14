@@ -2,6 +2,19 @@
 *  EVER 1.2   *
 ***************
 
+-- All .Internal calls have been removed.
+-- .onLoad: bug fixed (thanks to Prof Brian Ripley). system.file is now invoked with lib.loc = libname.
+-- population.check: less tight check on factor columns: now ONLY the values stored into df.population and
+                     into template are requested to be identical (and equally ordered). Formerly a mismatch
+                     in the levels attribute raised an error (which actually does not affect the results).
+-- bounds.hint: works better when either of the bounds of the star interval is not finite
+-- g.range: small change (now works better if zeros in initial and calibrated weights are not tied)
+
+
+***************
+*  EVER 1.1.1 *
+***************
+
 -- kottcalibrate: minor bug fixed (added drop = FALSE in mm[ , !zz, drop = FALSE])
 -- kottcalibrate: checks added on bounds (must be numeric and must satisfy bounds[1] <= 1 <= bounds[2])
 -- population.check: default value (FALSE) for 'partition' argument was lacking, despite documented.

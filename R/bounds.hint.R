@@ -39,15 +39,18 @@ function (deskott, df.population,
     if (inherits(df.population, "pop.totals")) {
         if (!identical(calmodel, attr(df.population, "calmodel"))) 
             warning("'calmodel' formula (1) does not agree with the 'calmodel' attribute of ", 
-                substitute(df.population), " (2). Value (2) will be used", immediate. = TRUE)
+                substitute(df.population), " (2). Value (2) will be used",
+				immediate. = TRUE)
         if (!identical(partition, attr(df.population, "partition"))) 
             warning("'partition' formula (1) does not agree with the 'partition' attribute of ", 
-                substitute(df.population), " (2). Value (2) will be used", immediate. = TRUE)
+                substitute(df.population), " (2). Value (2) will be used",
+				immediate. = TRUE)
         if (!identical(attr(deskott, "data"), attr(df.population, 
             "data"))) 
             warning("Data frames used to build objects ", 
-                substitute(deskott), " and ", substitute(df.population), 
-                " have different names", immediate. = TRUE)
+                substitute(deskott),
+				" and ", substitute(df.population), " have different names",
+				immediate. = TRUE)
     }
     else {
         df.population <- population.check(df.population, deskott, 
@@ -63,7 +66,7 @@ function (deskott, df.population,
     weights <- attr(deskott, "weights")
     weights.char <- names(model.frame(weights, deskott[1, ]))
     nrg <- attr(deskott, "nrg")
-    mk.bounds <- function(nrg,df.population,partition,partition.names=NULL){
+    mk.bounds <- function(nrg, df.population,partition,partition.names=NULL){
     ############################################################
     # Crea la lista 'bounds' con tre componenti:               #
     #  - 'call':                                               #
@@ -159,7 +162,7 @@ function (deskott, df.population,
         #  'interact': factor i cui livelli identificano le partizioni
         interact <- interaction(deskott[, rev(partition.vars), drop = FALSE], drop=TRUE)
         #  'groups': lista che contiene gli indici di riga delle osservazioni nelle diverse partizioni
-        groups <- .Internal(split(1:nrow(deskott), interact))
+        groups <- split(1:nrow(deskott), interact)
         range.iter <- function(wname) {
         #############################################
         # Funzione da ripetere su tutte le repliche #
@@ -190,34 +193,59 @@ function (deskott, df.population,
         }
     }
 
-all <- apply(bounds[["lower"]], 2, min)
-smallest <- min(1, all)
-bounds[["lower"]] <- rbind(bounds[["lower"]], all)
-
-all <- apply(bounds[["upper"]], 2, max)
-greatest <- max(1, all)
-bounds[["upper"]] <- rbind(bounds[["upper"]], all)
-
-mid <- (smallest+greatest)/2
-L <- mid - 2*(mid-smallest)
-U <- mid + 2*(greatest-mid)
-L.sugg <- round(L,3)
-if ( isTRUE(all.equal(L.sugg, 1)) ) L.sugg <- (L.sugg - 1E-3)
-U.sugg <- round(U,3)
-if ( isTRUE(all.equal(U.sugg, 1)) ) U.sugg <- (U.sugg + 1E-3)
-
-suggestion <- c(L.sugg, U.sugg)
-attr(suggestion, "star.interval") <- c(smallest, greatest)
-attr(suggestion, "bounds") <- bounds
-
-cat("\n")
-cat(paste("Feasible bounds for calibration problem must cover the interval [",
-             round(smallest,3),", ", round(greatest,3),"]\n",sep=""))
-cat("\n")
-cat(paste("A starting suggestion: try to calibrate with bounds=c(",
-           L.sugg, ", ", U.sugg, ")\n", sep=""))
-cat("Remark: this is just a hint, not an exact result\n")
-cat("\n")
-
-invisible(suggestion)
+    all <- apply(bounds[["lower"]], 2, min)
+    smallest <- min(1, all)
+    bounds[["lower"]] <- rbind(bounds[["lower"]], all)
+    all <- apply(bounds[["upper"]], 2, max)
+    greatest <- max(1, all)
+    bounds[["upper"]] <- rbind(bounds[["upper"]], all)
+    if (is.finite(smallest) && is.finite(greatest)) {
+        mid <- (smallest + greatest)/2
+        L <- mid - 2 * (mid - smallest)
+        U <- mid + 2 * (greatest - mid)
+        L.sugg <- round(L, 3)
+        if (isTRUE(all.equal(L.sugg, 1))) 
+            L.sugg <- (L.sugg - 0.001)
+        U.sugg <- round(U, 3)
+        if (isTRUE(all.equal(U.sugg, 1))) 
+            U.sugg <- (U.sugg + 0.001)
+        suggestion <- c(L.sugg, U.sugg)
+    }
+    else {
+        if (is.infinite(smallest) && is.infinite(greatest)) {
+            suggestion <- c(smallest, greatest)
+        }
+        else {
+            if (is.finite(smallest)) {
+                mid <- 1
+                L <- mid - 2 * (mid - smallest)
+                L.sugg <- round(L, 3)
+                if (isTRUE(all.equal(L.sugg, 1))) 
+                  L.sugg <- (L.sugg - 0.001)
+                U.sugg <- greatest
+            }
+            else {
+                mid <- 1
+                U <- mid + 2 * (greatest - mid)
+                U.sugg <- round(U, 3)
+                if (isTRUE(all.equal(U.sugg, 1))) 
+                  U.sugg <- (U.sugg + 0.001)
+                L.sugg <- smallest
+            }
+            suggestion <- c(L.sugg, U.sugg)
+        }
+    }
+    attr(suggestion, "star.interval") <- c(smallest, greatest)
+    attr(suggestion, "bounds") <- bounds
+    class(suggestion) <- c("bounds.hint", class(suggestion))
+    cat("\n")
+    cat(paste("A starting suggestion: try to calibrate with bounds=c(", 
+        L.sugg, ", ", U.sugg, ")\n", sep = ""))
+    cat("\n")
+    cat("Remark: this is just a hint, not an exact result\n")
+    cat(paste("Feasible bounds for calibration problem must cover the interval [", 
+        round(smallest, 3), ", ", round(greatest, 3), "]\n", 
+        sep = ""))
+    cat("\n")
+    invisible(suggestion)
 }

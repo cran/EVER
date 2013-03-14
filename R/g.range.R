@@ -18,15 +18,22 @@ function (cal.deskott)
     ################################################
         wr <- cal.deskott[, paste(w, r, sep = "")]
         w.calr <- cal.deskott[, paste(w.cal, r, sep = "")]
-        wr.notzero <- (wr != 0)
-        w.calr.notzero <- (w.calr != 0)
-        ranger <- range(abs(w.calr[w.calr.notzero]/wr[wr.notzero]))
-        # check: ci sono pesi finali non nulli corrispondenti a pesi iniziali nulli?
-        if (any(wr[w.calr.notzero] == 0)) 
-            ranger[2] <- Inf
-        # check: ci sono pesi finali nulli corrispondenti a pesi iniziali non nulli?
-        if (any(w.calr[wr.notzero] == 0)) 
-            ranger[1] <- min(0, ranger[1])
+        g <- w.calr/wr
+        g.nan <- g[is.nan(g)]
+        if (length(g.nan) == 0) {
+            ranger <- range(g)
+        }
+        else {
+            ranger <- range(g[!is.nan(g)])
+            if (!all(wr[is.nan(g)] == w.calr[is.nan(g)] & wr[is.nan(g)] == 
+                0)) {
+                warning("NaN g-weights not arising from 0/0 in random group ", 
+                  r)
+            }
+            else {
+                ranger <- range(ranger, 1)
+            }
+        }
         ranger
     }
     # original data

@@ -186,7 +186,7 @@ function (deskott, df.population,
         #  'interact': factor i cui livelli identificano le partizioni
         interact <- interaction(deskott[, rev(partition.vars), drop = FALSE], drop=TRUE)
         #  'groups': lista che contiene gli indici di riga delle osservazioni nelle diverse partizioni
-        groups <- .Internal(split(1:nrow(deskott), interact))
+        groups <- split(1:nrow(deskott), interact)
         kottcaliter <- function(wname, force = FALSE) {
         ######################################################################
         #  ATTENZIONE: Quando chiamero' kottcaliter passero' tutto il resto  #
